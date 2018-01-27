@@ -1,8 +1,9 @@
 package app
 
 import (
-	"city6/au/controllers"
+	"city6/au/handler"
 	"city6/au/middleware"
+	"city6/au/utils"
 
 	"github.com/kataras/iris"
 
@@ -13,6 +14,9 @@ import (
 
 // InitApp is
 func InitApp() {
+
+	utils.Mkdir(utils.LogFIlePath)
+
 	f := newLogFile()
 	defer f.Close()
 
@@ -35,12 +39,12 @@ func InitApp() {
 	// attach the file as logger, remember, iris' app logger is just an io.Writer.
 	app.Logger().SetOutput(newLogFile())
 
-	app.Get("/", controllers.IndexHandler)
-	app.Get("/create", controllers.CreateAppSecret)
-	app.Post("/create-link", controllers.LinkAppSecret)
+	app.Get("/", handler.IndexHandler)
+	app.Get("/create", handler.CreateAppSecret)
+	app.Post("/create-link", handler.LinkAppSecret)
+	app.Get("/get-link", handler.GetLinkUser)
 
 	// navigate to http://localhost:8080
-	// and open the ./logs.txt file
 	if err := app.Run(iris.Addr(":8080"), iris.WithoutBanner); err != nil {
 		if err != iris.ErrServerClosed {
 			app.Logger().Warn("Shutdown with error: " + err.Error())

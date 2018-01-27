@@ -1,6 +1,7 @@
-package controllers
+package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -40,26 +41,52 @@ func CreateAppSecret(ctx iris.Context) {
 
 // LinkAppSecret is
 func LinkAppSecret(ctx iris.Context) {
-	c := &models.Secret{}
-	if err := ctx.ReadJSON(c); err != nil {
+	data := &models.Secret{}
+	if err := ctx.ReadJSON(data); err != nil {
 		ResponseBad(ctx, err.Error())
 		return
 	}
-	fmt.Println(c)
-	rq := models.Secret{}
+	fmt.Println(data)
 
-	rq.Key = "c.Key"
-	ResponseJSON(ctx, rq)
+	if data.Token == "" || data.Name == "" {
+		ResponseBad(ctx, "user where is go?")
+		return
+	}
+
+	c := pool.GetPool()
+	err := joinAppSecret(c, data.Key)
+	if err != nil {
+		ResponseBad(ctx, err.Error())
+		return
+	}
+
+	user := models.User{}
+
+	user = data.User
+
+	jsons, errs := json.Marshal(user) //转换成JSON返回的是byte[]
+	if errs != nil {
+		fmt.Println(errs.Error())
+	}
+
+	_, err = c.Do("SET", data.Key, jsons, "EX", "120")
+
+	if err != nil {
+		ResponseBad(ctx, err.Error())
+		return
+	}
+
+	ResponseJSON(ctx, data)
 }
 
 // JoinAppSecret is
-func joinAppSecret(c redis.Conn, key string) (string, error) {
+func joinAppSecret(c redis.Conn, key string) error {
 	secret, err := redis.String(c.Do("GET", key))
 
 	if err != nil {
 		fmt.Println("redis get failed:", err)
-		return "", err
+		return err
 	}
 	fmt.Printf("Get key: %v \n", secret)
-	return secret, nil
+	return nil
 }
