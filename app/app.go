@@ -44,6 +44,9 @@ func InitApp() {
 	app.Post("/create-link", handler.LinkAppSecret)
 	app.Get("/get-link", handler.GetLinkUser)
 
+	// test demo
+	app.Get("/test/sign", handler.SingDemoT)
+
 	// navigate to http://localhost:8080
 	if err := app.Run(iris.Addr(":8080"), iris.WithoutBanner); err != nil {
 		if err != iris.ErrServerClosed {

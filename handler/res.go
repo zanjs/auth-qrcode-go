@@ -8,6 +8,7 @@ import (
 type Response struct {
 	Success bool        `json:"success"`
 	Error   string      `json:"error,omitempty"`
+	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 }
 
@@ -24,7 +25,7 @@ func ResponseJSON(ctx iris.Context, d interface{}) {
 func ResponseJSONError(ctx iris.Context, err string) {
 	ctx.JSON(&Response{
 		Success: false,
-		Error:   err,
+		Message: err,
 	})
 	ctx.Application().Logger().Info("response is error : " + err)
 }
@@ -34,7 +35,7 @@ func ResponseBad(ctx iris.Context, err string) {
 	ctx.StatusCode(iris.StatusBadRequest)
 	ctx.JSON(&Response{
 		Success: false,
-		Error:   err,
+		Message: err,
 	})
 	ctx.Application().Logger().Info("response is bad data: " + err)
 }
