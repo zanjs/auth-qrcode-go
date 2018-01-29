@@ -29,7 +29,7 @@ func CreateAppSecret(ctx iris.Context) {
 
 	c := pool.GetPool()
 
-	_, err = c.Do("SET", key, "", "EX", "120")
+	_, err = c.Do("SET", key, "", "EX", models.Config.Redis.Expire)
 
 	if err != nil {
 		fmt.Println("redis set failed:", err)
@@ -69,7 +69,7 @@ func LinkAppSecret(ctx iris.Context) {
 		fmt.Println(errs.Error())
 	}
 
-	_, err = c.Do("SET", data.Key, jsons, "EX", "120")
+	_, err = c.Do("SET", data.Key, jsons, "EX", models.Config.Redis.Expire)
 
 	if err != nil {
 		ResponseBad(ctx, err.Error())

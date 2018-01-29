@@ -15,3 +15,5 @@ log/*
 debug
 .vscode
 au
+app.yml
+au_linux_amd64

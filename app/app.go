@@ -3,17 +3,23 @@ package app
 import (
 	"city6/au/handler"
 	"city6/au/middleware"
+	"city6/au/models"
 	"city6/au/utils"
+	"fmt"
 
 	"github.com/kataras/iris"
 
 	"github.com/iris-contrib/middleware/cors"
+	"github.com/jinzhu/configor"
 	"github.com/kataras/iris/middleware/logger"
 	"github.com/kataras/iris/middleware/recover"
 )
 
 // InitApp is
 func InitApp() {
+
+	configor.Load(&models.Config, "app.yml")
+	fmt.Printf("config port : %#v", models.Config)
 
 	utils.Mkdir(utils.LogFIlePath)
 
@@ -47,8 +53,8 @@ func InitApp() {
 	// test demo
 	app.Get("/test/sign", handler.SingDemoT)
 
-	// navigate to http://localhost:8080
-	if err := app.Run(iris.Addr(":8080"), iris.WithoutBanner); err != nil {
+	// navigate to defafult config http://localhost:8080
+	if err := app.Run(iris.Addr(":"+models.Config.APP.Port), iris.WithoutBanner); err != nil {
 		if err != iris.ErrServerClosed {
 			app.Logger().Warn("Shutdown with error: " + err.Error())
 		}
