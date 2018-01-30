@@ -2,12 +2,13 @@ package models
 
 // User is info
 type User struct {
-	Name  string `json:"name"`
-	Token string `json:"token"`
+	NickName  string `json:"nickName"`
+	AvatarURL string `json:"avatarUrl"`
 }
 
 // Secret is
 type Secret struct {
 	Key  string `json:"key"`
+	UKey string `json:"ukey"`
 	User `json:"user"`
 }

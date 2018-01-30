@@ -37,6 +37,7 @@ func CreateAppSecret(ctx iris.Context) {
 		return
 	}
 	ResponseJSON(ctx, key)
+	return
 }
 
 // LinkAppSecret is
@@ -48,7 +49,7 @@ func LinkAppSecret(ctx iris.Context) {
 	}
 	fmt.Println(data)
 
-	if data.Token == "" || data.Name == "" {
+	if data.User.NickName == "" {
 		ResponseBad(ctx, "user where is go?")
 		return
 	}

@@ -6,6 +6,12 @@ import (
 
 // Before is
 func Before(ctx iris.Context) {
+
+	if ctx.Method() == "OPTIONS" {
+		ctx.WriteString("ok")
+		return
+	}
+
 	shareInformation := "this is a sharable information between handlers"
 
 	requestPath := ctx.Path()
