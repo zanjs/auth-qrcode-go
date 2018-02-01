@@ -61,11 +61,11 @@ func LinkAppSecret(ctx iris.Context) {
 		return
 	}
 
-	user := models.User{}
+	// user := models.User{}
 
-	user = data.User
+	// user = data.User
 
-	jsons, errs := json.Marshal(user) //转换成JSON返回的是byte[]
+	jsons, errs := json.Marshal(data) //转换成JSON返回的是byte[]
 	if errs != nil {
 		fmt.Println(errs.Error())
 	}
