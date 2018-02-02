@@ -11,8 +11,8 @@ import (
 
 // GetLinkUser is
 func GetLinkUser(ctx iris.Context) {
-	fms := ctx.FormValues()
-	fmt.Println(fms)
+	// fms := ctx.FormValues()
+	// fmt.Println(fms)
 
 	skey := ctx.FormValue("skey")
 
@@ -21,13 +21,14 @@ func GetLinkUser(ctx iris.Context) {
 		return
 	}
 
-	c := pool.GetPool()
+	c := pool.RedisClient.Get()
+	defer c.Close()
 
 	secret, err := redis.String(c.Do("GET", skey))
 
 	if err != nil {
 		fmt.Println("redis get failed:", err)
-		ResponseBad(ctx, err.Error())
+		ResponseJSONError(ctx, err.Error())
 		return
 	}
 

@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"encoding/json"
+
 	"github.com/kataras/iris"
 )
 
@@ -11,17 +13,18 @@ func Before(ctx iris.Context) {
 		ctx.WriteString("ok")
 		return
 	}
-
-	shareInformation := "this is a sharable information between handlers"
-
-	requestPath := ctx.Path()
-	println("Before the indexHandler or contactHandler: " + requestPath)
-
-	ctx.Values().Set("info", shareInformation)
-
+	// shareInformation := "this is a sharable information between handlers"
+	// ctx.Values().Set("info", shareInformation)
+	u := ctx.Request().UserAgent()
+	ip := "\nip:" + ctx.RemoteAddr()
 	// for the sake of simplicity, in order see the logs at the ./_today_.txt
-	println(ctx.URLParams())
-	ctx.Application().Logger().Info("Request path: " + ctx.Path())
+	fmsMap := ctx.FormValues()
+	fmsJSON, _ := json.Marshal(fmsMap)
+
+	fmsStr := "\nFms:" + string(fmsJSON)
+	info := "Request path:" + ctx.Path() + ip + fmsStr + "\nUserAgent: " + u
+
+	ctx.Application().Logger().Info(info)
 	ctx.Next()
 }
 

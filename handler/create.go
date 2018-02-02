@@ -27,7 +27,8 @@ func CreateAppSecret(ctx iris.Context) {
 	fmt.Println(v4)
 	key := v4
 
-	c := pool.GetPool()
+	c := pool.RedisClient.Get()
+	defer c.Close()
 
 	_, err = c.Do("SET", key, "", "EX", models.Config.Redis.Expire)
 
@@ -54,7 +55,8 @@ func LinkAppSecret(ctx iris.Context) {
 		return
 	}
 
-	c := pool.GetPool()
+	c := pool.RedisClient.Get()
+	defer c.Close()
 	err := joinAppSecret(c, data.Key)
 	if err != nil {
 		ResponseBad(ctx, err.Error())
